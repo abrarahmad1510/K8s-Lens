@@ -1,123 +1,117 @@
 package diagnostics
 
 import (
+	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 )
 
-// AnalyzePodEvents Examines Recent Pod Events
-func (a *ResourceAnalyzer) analyzePodEvents(pod *corev1.Pod, namespace string, result *AnalysisResult) string {
-	var eventsStr strings.Builder
+// EventsAnalyzer provides analysis for Kubernetes events
+type EventsAnalyzer struct {
+	client    kubernetes.Interface
+	namespace string
+}
 
-	eventsStr.WriteString("Recent Events Analysis:\n")
+// NewEventsAnalyzer creates a new EventsAnalyzer
+func NewEventsAnalyzer(client kubernetes.Interface, namespace string) *EventsAnalyzer {
+	return &EventsAnalyzer{
+		client:    client,
+		namespace: namespace,
+	}
+}
 
-	events, err := a.client.Clientset.CoreV1().Events(namespace).List(a.ctx, metav1.ListOptions{
-		FieldSelector: fmt.Sprintf("involvedObject.name=%s", pod.Name),
+// EventAnalysis contains the analysis of events
+type EventAnalysis struct {
+	TotalEvents   int
+	WarningEvents []corev1.Event
+	NormalEvents  []corev1.Event
+	RecentEvents  []corev1.Event
+	Issues        []string
+}
+
+// AnalyzeEvents analyzes events for a specific resource
+func (e *EventsAnalyzer) AnalyzeEvents(resourceName string, resourceType string) (*EventAnalysis, error) {
+	// Get events for the resource
+	events, err := e.client.CoreV1().Events(e.namespace).List(context.TODO(), metav1.ListOptions{
+		FieldSelector: fmt.Sprintf("involvedObject.name=%s,involvedObject.kind=%s", resourceName, resourceType),
 	})
-
-	if err != nil || len(events.Items) == 0 {
-		eventsStr.WriteString("  Status: No Recent Events Found\n\n")
-		return eventsStr.String()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get events for %s %s: %v", resourceType, resourceName, err)
 	}
 
-	// Show Last 5 Events
-	eventCount := 0
-	for i := len(events.Items) - 1; i >= 0 && eventCount < 5; i-- {
-		event := events.Items[i]
-		if time.Since(event.LastTimestamp.Time).Hours() > 24 {
-			continue // Skip Events Older Than 24 Hours
-		}
-
-		eventType := "Info"
-		if event.Type == "Warning" {
-			eventType = "Warning"
-			result.Warnings = append(result.Warnings, fmt.Sprintf("Event: %s", event.Message))
-		}
-
-		eventsStr.WriteString(fmt.Sprintf("  [%s] %s: %s - %s\n",
-			event.LastTimestamp.Format("15:04:05"), eventType, event.Reason, event.Message))
-		eventCount++
+	analysis := &EventAnalysis{
+		TotalEvents: len(events.Items),
 	}
 
-	eventsStr.WriteString("\n")
-	return eventsStr.String()
+	// Categorize events
+	now := time.Now()
+	for _, event := range events.Items {
+		// Check if event is recent (last 24 hours)
+		if event.LastTimestamp.Time.After(now.Add(-24 * time.Hour)) {
+			analysis.RecentEvents = append(analysis.RecentEvents, event)
+		}
+
+		// Categorize by type
+		if event.Type == corev1.EventTypeWarning {
+			analysis.WarningEvents = append(analysis.WarningEvents, event)
+		} else {
+			analysis.NormalEvents = append(analysis.NormalEvents, event)
+		}
+	}
+
+	// Generate issues from warning events
+	for _, event := range analysis.WarningEvents {
+		if event.LastTimestamp.Time.After(now.Add(-1 * time.Hour)) {
+			analysis.Issues = append(analysis.Issues,
+				fmt.Sprintf("Recent warning: %s - %s", event.Reason, event.Message))
+		}
+	}
+
+	return analysis, nil
 }
 
-// AnalyzePodResources Checks Resource Configuration
-func (a *ResourceAnalyzer) analyzePodResources(pod *corev1.Pod, result *AnalysisResult) string {
-	var resources strings.Builder
+// AnalyzeNamespaceEvents analyzes all events in a namespace
+func (e *EventsAnalyzer) AnalyzeNamespaceEvents() (*EventAnalysis, error) {
+	events, err := e.client.CoreV1().Events(e.namespace).List(context.TODO(), metav1.ListOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get events for namespace %s: %v", e.namespace, err)
+	}
 
-	resources.WriteString("Resource Analysis:\n")
+	analysis := &EventAnalysis{
+		TotalEvents: len(events.Items),
+	}
 
-	hasLimits := false
-	hasRequests := false
-
-	for _, container := range pod.Spec.Containers {
-		if container.Resources.Limits != nil {
-			hasLimits = true
+	// Categorize events
+	now := time.Now()
+	for _, event := range events.Items {
+		// Check if event is recent (last 24 hours)
+		if event.LastTimestamp.Time.After(now.Add(-24 * time.Hour)) {
+			analysis.RecentEvents = append(analysis.RecentEvents, event)
 		}
-		if container.Resources.Requests != nil {
-			hasRequests = true
-		}
-	}
 
-	if !hasLimits {
-		result.Warnings = append(result.Warnings, "No Resource Limits Set")
-		resources.WriteString("  Warning: No Resource Limits Configured\n")
-	} else {
-		resources.WriteString("  Status: Resource Limits Configured\n")
-	}
-
-	if !hasRequests {
-		result.Warnings = append(result.Warnings, "No Resource Requests Set")
-		resources.WriteString("  Warning: No Resource Requests Configured\n")
-	} else {
-		resources.WriteString("  Status: Resource Requests Configured\n")
-	}
-
-	resources.WriteString("\n")
-	return resources.String()
-}
-
-// GenerateSummary Creates Final Analysis Summary
-func (a *ResourceAnalyzer) generateSummary(result *AnalysisResult) string {
-	var summary strings.Builder
-
-	summary.WriteString("Summary And Recommendations:\n")
-	summary.WriteString(fmt.Sprintf("  Overall Health: "))
-
-	if result.Healthy {
-		summary.WriteString("Healthy\n")
-	} else {
-		summary.WriteString("Needs Attention\n")
-	}
-
-	if len(result.Errors) > 0 {
-		summary.WriteString("  Critical Issues:\n")
-		for _, err := range result.Errors {
-			summary.WriteString(fmt.Sprintf("    • %s\n", err))
+		// Categorize by type
+		if event.Type == corev1.EventTypeWarning {
+			analysis.WarningEvents = append(analysis.WarningEvents, event)
+		} else {
+			analysis.NormalEvents = append(analysis.NormalEvents, event)
 		}
 	}
 
-	if len(result.Warnings) > 0 {
-		summary.WriteString("  Warnings:\n")
-		for _, warning := range result.Warnings {
-			summary.WriteString(fmt.Sprintf("    • %s\n", warning))
+	// Generate issues from recent warning events
+	for _, event := range analysis.WarningEvents {
+		if event.LastTimestamp.Time.After(now.Add(-1 * time.Hour)) {
+			analysis.Issues = append(analysis.Issues,
+				fmt.Sprintf("[%s] %s: %s - %s",
+					event.InvolvedObject.Kind,
+					event.InvolvedObject.Name,
+					event.Reason,
+					event.Message))
 		}
 	}
 
-	if len(result.Recommendations) > 0 {
-		summary.WriteString("  Recommended Actions:\n")
-		for _, rec := range result.Recommendations {
-			summary.WriteString(fmt.Sprintf("    • %s\n", rec))
-		}
-	} else if result.Healthy {
-		summary.WriteString("  Status: No Actions Needed - Everything Looks Good\n")
-	}
-
-	return summary.String()
+	return analysis, nil
 }

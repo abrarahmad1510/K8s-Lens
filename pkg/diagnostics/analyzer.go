@@ -3,129 +3,71 @@ package diagnostics
 import (
 	"context"
 	"fmt"
-	"strings"
 
-	"github.com/abrarahmad1510/k8s-lens/pkg/k8s"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
-// AnalysisResult Contains Diagnostic Results
-type AnalysisResult struct {
-	Healthy         bool
-	Confidence      float64
-	Report          string
-	Recommendations []string
-	Warnings        []string
-	Errors          []string
-}
-
-// ResourceAnalyzer Manages Kubernetes Resource Analysis
+// ResourceAnalyzer is the main analyzer struct
 type ResourceAnalyzer struct {
-	client *k8s.Client
-	ctx    context.Context
+	client kubernetes.Interface
 }
 
-// NewResourceAnalyzer Creates A New Resource Analyzer Instance
+// NewResourceAnalyzer creates a new ResourceAnalyzer
 func NewResourceAnalyzer() (*ResourceAnalyzer, error) {
-	client, err := k8s.NewClient()
+	client, err := NewKubernetesClient()
 	if err != nil {
 		return nil, err
 	}
-
-	return &ResourceAnalyzer{
-		client: client,
-		ctx:    context.Background(),
-	}, nil
+	return &ResourceAnalyzer{client: client}, nil
 }
 
-// TestConnection Verifies Kubernetes Connectivity
-func (a *ResourceAnalyzer) TestConnection() error {
-	return a.client.TestConnection()
+// NewKubernetesClient creates a Kubernetes client
+func NewKubernetesClient() (kubernetes.Interface, error) {
+	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
+	configOverrides := &clientcmd.ConfigOverrides{}
+	kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
+
+	config, err := kubeConfig.ClientConfig()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get Kubernetes config: %v", err)
+	}
+
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create Kubernetes client: %v", err)
+	}
+
+	return client, nil
 }
 
-// GetClusterInfo Returns Cluster Information
-func (a *ResourceAnalyzer) GetClusterInfo() (string, error) {
-	version, err := a.client.GetServerVersion()
+// TestConnection tests the Kubernetes connection
+func (r *ResourceAnalyzer) TestConnection() error {
+	_, err := r.client.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	return err
+}
+
+// GetClusterInfo returns the cluster version
+func (r *ResourceAnalyzer) GetClusterInfo() (string, error) {
+	version, err := r.client.Discovery().ServerVersion()
 	if err != nil {
 		return "", err
 	}
-	return version, nil
+	return version.GitVersion, nil
 }
 
-// AnalyzeResource Routes Analysis Based On Resource Type
+// AnalyzeResource analyzes any Kubernetes resource (placeholder for now)
 func AnalyzeResource(resourceType, resourceName, namespace string) (*AnalysisResult, error) {
-	analyzer, err := NewResourceAnalyzer()
-	if err != nil {
-		return nil, err
-	}
-
-	switch strings.ToLower(resourceType) {
-	case "pod", "pods", "po":
-		return analyzer.AnalyzePod(resourceName, namespace)
-	case "deployment", "deployments", "deploy":
-		return analyzer.AnalyzeDeployment(resourceName, namespace)
-	case "service", "services", "svc":
-		return analyzer.AnalyzeService(resourceName, namespace)
-	case "node", "nodes", "no":
-		return analyzer.AnalyzeNode(resourceName)
-	case "namespace", "namespaces", "ns":
-		return analyzer.AnalyzeNamespace(resourceName)
-	default:
-		return nil, fmt.Errorf("Unsupported Resource Type: %s", resourceType)
-	}
-}
-
-// AnalyzeDeployment Placeholder For Deployment Analysis
-func (a *ResourceAnalyzer) AnalyzeDeployment(deploymentName, namespace string) (*AnalysisResult, error) {
+	// This is a simplified version - you'll want to expand this
 	return &AnalysisResult{
-		Healthy:    true,
-		Confidence: 0.7,
-		Report:     "Deployment Analysis Feature Coming Soon In Phase 3",
-		Recommendations: []string{
-			"Check Deployment Replica Status",
-			"Verify Pod Template Specifications",
-			"Review Update Strategy Configuration",
-		},
+		Report:          fmt.Sprintf("Analysis for %s/%s in namespace %s", resourceType, resourceName, namespace),
+		Recommendations: []string{},
 	}, nil
 }
 
-// AnalyzeService Placeholder For Service Analysis
-func (a *ResourceAnalyzer) AnalyzeService(serviceName, namespace string) (*AnalysisResult, error) {
-	return &AnalysisResult{
-		Healthy:    true,
-		Confidence: 0.7,
-		Report:     "Service Analysis Feature Coming Soon In Phase 3",
-		Recommendations: []string{
-			"Verify Service Endpoints",
-			"Check Selector Match Labels",
-			"Review Port Configuration",
-		},
-	}, nil
-}
-
-// AnalyzeNode Placeholder For Node Analysis
-func (a *ResourceAnalyzer) AnalyzeNode(nodeName string) (*AnalysisResult, error) {
-	return &AnalysisResult{
-		Healthy:    true,
-		Confidence: 0.7,
-		Report:     "Node Analysis Feature Coming Soon In Phase 3",
-		Recommendations: []string{
-			"Check Node Resource Capacity",
-			"Verify Node Conditions And Status",
-			"Review Taints And Tolerations",
-		},
-	}, nil
-}
-
-// AnalyzeNamespace Placeholder For Namespace Analysis
-func (a *ResourceAnalyzer) AnalyzeNamespace(namespaceName string) (*AnalysisResult, error) {
-	return &AnalysisResult{
-		Healthy:    true,
-		Confidence: 0.7,
-		Report:     "Namespace Analysis Feature Coming Soon In Phase 3",
-		Recommendations: []string{
-			"Review Resource Quotas",
-			"Check Network Policies",
-			"Verify Limit Ranges",
-		},
-	}, nil
+// AnalysisResult holds the analysis results
+type AnalysisResult struct {
+	Report          string
+	Recommendations []string
 }

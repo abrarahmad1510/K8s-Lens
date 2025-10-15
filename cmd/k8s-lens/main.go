@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analyze"
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/setup"
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/test"
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/version"
 	"github.com/abrarahmad1510/k8s-lens/internal/utils"
-	"github.com/abrarahmad1510/k8s-lens/pkg/diagnostics"
 	"github.com/common-nighthawk/go-figure"
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 var (
-	version = "0.2.0"
-	blue    = color.New(color.FgBlue).SprintFunc()
-	green   = color.New(color.FgGreen).SprintFunc()
-	red     = color.New(color.FgRed).SprintFunc()
-	yellow  = color.New(color.FgYellow).SprintFunc()
+	versionNum = "0.3.0" // Updated version for Phase 3
+	blue       = color.New(color.FgBlue).SprintFunc()
+	green      = color.New(color.FgGreen).SprintFunc()
+	red        = color.New(color.FgRed).SprintFunc()
+	yellow     = color.New(color.FgYellow).SprintFunc()
 )
 
 func main() {
@@ -43,132 +46,25 @@ Features:
 Examples:
   k8s-lens analyze pod my-app-pod
   k8s-lens analyze deployment my-web-service
-  k8s-lens analyze namespace production
+  k8s-lens analyze statefulset database
+  k8s-lens setup
   k8s-lens version
 `),
-		Version:       version,
+		Version:       versionNum,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
 
-	rootCmd.AddCommand(createAnalyzeCommand())
-	rootCmd.AddCommand(createVersionCommand())
+	// Add commands from the new command structure
+	rootCmd.AddCommand(analyze.AnalyzeCmd)
+	rootCmd.AddCommand(setup.SetupCmd)
+	rootCmd.AddCommand(version.VersionCmd)
+	rootCmd.AddCommand(test.TestCmd)
 	rootCmd.AddCommand(createCompletionCommand())
-	rootCmd.AddCommand(createSetupCommand())
 
 	if err := rootCmd.Execute(); err != nil {
 		utils.PrintError("Command Execution Failed: %s", err)
 		os.Exit(1)
-	}
-}
-
-func createAnalyzeCommand() *cobra.Command {
-	var namespace string
-	var verbose bool
-
-	cmd := &cobra.Command{
-		Use:   "analyze [resource-type] [resource-name]",
-		Short: blue("Analyze A Kubernetes Resource For Issues"),
-		Long: yellow(`
-Analyze Kubernetes Resources And Get Intelligent Diagnostics
-
-Supported Resource Types:
-• pod, pods, po
-• deployment, deployments, deploy  
-• service, services, svc
-• namespace, namespaces, ns
-• node, nodes, no
-
-Examples:
-  k8s-lens analyze pod my-app-pod-12345
-  k8s-lens analyze deployment web-api -n production
-  k8s-lens analyze node worker-1 --verbose
-`),
-		Args: cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			resourceType := args[0]
-			resourceName := args[1]
-
-			if verbose {
-				utils.PrintInfo("Verbose Mode Enabled")
-				utils.PrintInfo("Resource Type: %s", resourceType)
-				utils.PrintInfo("Resource Name: %s", resourceName)
-				utils.PrintInfo("Namespace: %s", namespace)
-			}
-
-			utils.PrintSuccess("Analyzing %s/%s In Namespace %s", resourceType, resourceName, namespace)
-
-			// Real Kubernetes Analysis
-			result, err := diagnostics.AnalyzeResource(resourceType, resourceName, namespace)
-			if err != nil {
-				utils.PrintError("Analysis Failed: %s", err)
-				os.Exit(1)
-			}
-
-			// Display Results
-			fmt.Println(result.Report)
-
-			if verbose && len(result.Recommendations) > 0 {
-				utils.PrintSection("Intelligent Recommendations")
-				for _, rec := range result.Recommendations {
-					utils.PrintInfo("%s", rec)
-				}
-			}
-		},
-	}
-
-	cmd.Flags().StringVarP(&namespace, "namespace", "n", "default", "Kubernetes Namespace")
-	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable Verbose Output")
-	return cmd
-}
-
-func createSetupCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "setup",
-		Short: blue("Setup And Verify Kubernetes Connection"),
-		Run: func(cmd *cobra.Command, args []string) {
-			utils.PrintInfo("Setting Up K8s Lens")
-
-			// Test Kubernetes Connection
-			analyzer, err := diagnostics.NewResourceAnalyzer()
-			if err != nil {
-				utils.PrintError("Failed To Connect To Kubernetes: %s", err)
-				os.Exit(1)
-			}
-
-			utils.PrintSuccess("Successfully Connected To Kubernetes Cluster")
-			utils.PrintInfo("Testing Cluster Access")
-
-			// Test Basic Operations
-			if err := analyzer.TestConnection(); err != nil {
-				utils.PrintError("Cluster Access Test Failed: %s", err)
-				os.Exit(1)
-			}
-
-			// Get Cluster Info
-			clusterInfo, err := analyzer.GetClusterInfo()
-			if err != nil {
-				utils.PrintWarning("Unable To Retrieve Cluster Version Information")
-			} else {
-				utils.PrintInfo("Cluster Version: %s", clusterInfo)
-			}
-
-			utils.PrintSuccess("K8s Lens Is Ready To Analyze Your Kubernetes Resources")
-		},
-	}
-}
-
-func createVersionCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "version",
-		Short: blue("Print Version Information"),
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("K8s Lens Version: %s\n", green(version))
-			fmt.Printf("Go Version: %s\n", green(utils.GetGoVersion()))
-			fmt.Printf("Platform: %s\n", green(utils.GetPlatform()))
-			fmt.Printf("Kubernetes Client: %s\n", green("Enabled"))
-			fmt.Printf("Built With: %s\n", green("For The Kubernetes Community"))
-		},
 	}
 }
 

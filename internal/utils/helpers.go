@@ -3,83 +3,61 @@ package utils
 import (
 	"fmt"
 	"runtime"
-	"strings"
 
 	"github.com/fatih/color"
 )
 
-var (
-	Info    = color.New(color.FgBlue).PrintfFunc()
-	Success = color.New(color.FgGreen).PrintfFunc()
-	Warning = color.New(color.FgYellow).PrintfFunc()
-	Error   = color.New(color.FgRed).PrintfFunc()
-)
-
-// PrintInfo Displays Informational Messages
+// PrintInfo prints an info message
 func PrintInfo(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
-	Info("INFO: %s\n", capitalizeFirst(message))
+	fmt.Printf("\033[36mINFO:\033[0m %s\n", message)
 }
 
-// PrintSuccess Displays Success Messages
+// PrintSuccess prints a success message
 func PrintSuccess(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
-	Success("SUCCESS: %s\n", capitalizeFirst(message))
+	fmt.Printf("\033[32mSUCCESS:\033[0m %s\n", message)
 }
 
-// PrintWarning Displays Warning Messages
+// PrintWarning prints a warning message
 func PrintWarning(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
-	Warning("WARNING: %s\n", capitalizeFirst(message))
+	fmt.Printf("\033[33mWARNING:\033[0m %s\n", message)
 }
 
-// PrintError Displays Error Messages
+// PrintError prints an error message
 func PrintError(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
-	Error("ERROR: %s\n", capitalizeFirst(message))
+	fmt.Printf("\033[31mERROR:\033[0m %s\n", message)
 }
 
-// PrintSection Creates A Section Header
+// PrintSection prints a section header
 func PrintSection(title string) {
-	cyan := color.New(color.FgCyan).Add(color.Bold)
-	cyan.Printf("\n%s\n", strings.ToUpper(title))
-	cyan.Println(strings.Repeat("=", len(title)))
+	fmt.Printf("\n\033[1;34m=== %s ===\033[0m\n", title)
 }
 
-// GetGoVersion Returns The Current Go Version
+// GetGoVersion returns the Go version
 func GetGoVersion() string {
 	return runtime.Version()
 }
 
-// GetPlatform Returns The Current Platform
+// GetPlatform returns the platform information
 func GetPlatform() string {
-	return fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH)
+	return runtime.GOOS + "/" + runtime.GOARCH
 }
 
-// CheckError Simplifies Error Handling
-func CheckError(err error, message string) {
-	if err != nil {
-		PrintError("%s: %s", message, err)
+// Colorize returns a colored string
+func Colorize(text string, colorCode string) string {
+	switch colorCode {
+	case "blue":
+		return color.New(color.FgBlue).SprintFunc()(text)
+	case "green":
+		return color.New(color.FgGreen).SprintFunc()(text)
+	case "red":
+		return color.New(color.FgRed).SprintFunc()(text)
+	case "yellow":
+		return color.New(color.FgYellow).SprintFunc()(text)
+	default:
+		return text
 	}
-}
-
-// FatalError Prints Error And Exits
-func FatalError(err error, message string) {
-	if err != nil {
-		PrintError("%s: %s", message, err)
-		panic(err)
-	}
-}
-
-// CapitalizeFirst Capitalizes The First Letter Of A String
-func capitalizeFirst(s string) string {
-	if len(s) == 0 {
-		return s
-	}
-	return strings.ToUpper(s[:1]) + s[1:]
-}
-
-// FormatDuration Formats Duration In Human Readable Format
-func FormatDuration(duration string) string {
-	return strings.ToLower(duration)
 }

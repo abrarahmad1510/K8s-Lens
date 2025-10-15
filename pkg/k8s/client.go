@@ -12,10 +12,10 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
-// Client Manages Kubernetes API Connections
+// Client Manages Kubernetes API Connections and embeds kubernetes.Interface
 type Client struct {
-	Clientset *kubernetes.Clientset
-	Config    *rest.Config
+	kubernetes.Interface
+	Config *rest.Config
 }
 
 // NewClient Creates A New Kubernetes Client
@@ -46,14 +46,14 @@ func NewClient() (*Client, error) {
 	}
 
 	return &Client{
-		Clientset: clientset,
+		Interface: clientset,
 		Config:    config,
 	}, nil
 }
 
 // TestConnection Verifies Kubernetes API Connectivity
 func (c *Client) TestConnection() error {
-	_, err := c.Clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+	_, err := c.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
 	if err != nil {
 		return fmt.Errorf("Failed To Connect To Kubernetes API: %v", err)
 	}
@@ -62,7 +62,7 @@ func (c *Client) TestConnection() error {
 
 // GetServerVersion Returns Kubernetes Server Version
 func (c *Client) GetServerVersion() (string, error) {
-	version, err := c.Clientset.ServerVersion()
+	version, err := c.Discovery().ServerVersion()
 	if err != nil {
 		return "", fmt.Errorf("Failed To Get Server Version: %v", err)
 	}
