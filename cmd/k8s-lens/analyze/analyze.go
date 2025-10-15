@@ -16,4 +16,8 @@ func init() {
 	AnalyzeCmd.AddCommand(podCmd)
 	AnalyzeCmd.AddCommand(deploymentCmd)
 	AnalyzeCmd.AddCommand(statefulsetCmd)
+	AnalyzeCmd.AddCommand(serviceCmd)
+	AnalyzeCmd.AddCommand(networkCmd)
+	AnalyzeCmd.AddCommand(endpointCmd)
+	AnalyzeCmd.AddCommand(securityCmd)
 }
