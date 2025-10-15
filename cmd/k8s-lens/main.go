@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analyze"
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/optimize"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/setup"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/test"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/version"
@@ -61,6 +62,7 @@ Examples:
 	rootCmd.AddCommand(version.VersionCmd)
 	rootCmd.AddCommand(test.TestCmd)
 	rootCmd.AddCommand(createCompletionCommand())
+	rootCmd.AddCommand(optimize.OptimizeCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		utils.PrintError("Command Execution Failed: %s", err)

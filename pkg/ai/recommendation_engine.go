@@ -1,83 +1,114 @@
 package ai
 
-import (
-	"strings"
-)
-
-// RecommendationEngine Provides Intelligent Troubleshooting Suggestions
+// RecommendationEngine provides intelligent recommendations
 type RecommendationEngine struct {
-	knowledgeBase map[string][]string
+	knowledgeBase map[string]RecommendationRule
 }
 
-// NewRecommendationEngine Creates A New Recommendation Engine
+// NewRecommendationEngine creates a new RecommendationEngine
 func NewRecommendationEngine() *RecommendationEngine {
-	return &RecommendationEngine{
-		knowledgeBase: map[string][]string{
-			"ImagePullBackOff": {
-				"Check If The Image Name And Tag Are Correct",
-				"Verify Docker Registry Accessibility",
-				"Check Image Pull Secrets: kubectl get secrets",
-				"Try Pulling The Image Manually: docker pull <image>",
-			},
-			"CrashLoopBackOff": {
-				"Check Application Logs: kubectl logs <pod> --previous",
-				"Verify Environment Variables And Config Maps",
-				"Check Resource Limits And Requests",
-				"Test The Application Locally With The Same Configuration",
-			},
-			"Pending": {
-				"Check Node Resources: kubectl describe nodes",
-				"Verify Persistent Volume Claims",
-				"Check Resource Quotas: kubectl describe quota",
-				"Look At Scheduler Events: kubectl get events",
-			},
-			"OOMKilled": {
-				"Increase Memory Limits In The Container Spec",
-				"Check For Memory Leaks In The Application",
-				"Monitor Application Memory Usage",
-				"Consider Adding Resource Requests And Limits",
-			},
-		},
+	engine := &RecommendationEngine{
+		knowledgeBase: make(map[string]RecommendationRule),
 	}
+	engine.initializeKnowledgeBase()
+	return engine
 }
 
-// GetRecommendations Returns Troubleshooting Suggestions For Specific Issues
-func (r *RecommendationEngine) GetRecommendations(issueType string) []string {
-	if recs, exists := r.knowledgeBase[issueType]; exists {
-		return recs
-	}
-	return []string{"Check Kubernetes Documentation And Application Logs For More Details"}
+// RecommendationRule defines a pattern and corresponding recommendation
+type RecommendationRule struct {
+	Pattern        string
+	Condition      func(context map[string]interface{}) bool
+	Recommendation string
+	Priority       int
+	Category       string
 }
 
-// AnalyzePatterns Analyzes Log Patterns For Intelligent Recommendations
-func (r *RecommendationEngine) AnalyzePatterns(logs string) []string {
-	logsLower := strings.ToLower(logs)
+// GenerateRecommendations generates intelligent recommendations based on context
+func (r *RecommendationEngine) GenerateRecommendations(context map[string]interface{}) []string {
 	var recommendations []string
 
-	if strings.Contains(logsLower, "connection refused") {
-		recommendations = append(recommendations,
-			"Application Cannot Connect To Dependent Service - Check Service Discovery And Networking")
-	}
-
-	if strings.Contains(logsLower, "out of memory") || strings.Contains(logsLower, "oom") {
-		recommendations = append(recommendations,
-			"Container Is Hitting Memory Limits - Consider Increasing Memory Requests And Limits")
-	}
-
-	if strings.Contains(logsLower, "permission denied") {
-		recommendations = append(recommendations,
-			"Check Security Context And File Permissions In The Container")
-	}
-
-	if strings.Contains(logsLower, "no such file or directory") {
-		recommendations = append(recommendations,
-			"Check Container File System And Volume Mounts")
-	}
-
-	if len(recommendations) == 0 {
-		recommendations = append(recommendations,
-			"Review Application Logs For Specific Error Patterns")
+	for _, rule := range r.knowledgeBase {
+		if rule.Condition(context) {
+			recommendations = append(recommendations, rule.Recommendation)
+		}
 	}
 
 	return recommendations
+}
+
+func (r *RecommendationEngine) initializeKnowledgeBase() {
+	// Define recommendation rules based on common Kubernetes issues
+	r.knowledgeBase["high_restarts"] = RecommendationRule{
+		Pattern: "High container restart count",
+		Condition: func(context map[string]interface{}) bool {
+			restarts, ok := context["restart_count"].(int)
+			return ok && restarts > 10
+		},
+		Recommendation: "Investigate application crashes. Check application logs and consider adding liveness probes.",
+		Priority:       1,
+		Category:       "Reliability",
+	}
+
+	r.knowledgeBase["missing_limits"] = RecommendationRule{
+		Pattern: "Missing resource limits",
+		Condition: func(context map[string]interface{}) bool {
+			hasLimits, ok := context["has_limits"].(bool)
+			return ok && !hasLimits
+		},
+		Recommendation: "Add resource limits to prevent resource exhaustion and ensure quality of service.",
+		Priority:       2,
+		Category:       "Performance",
+	}
+
+	r.knowledgeBase["image_pull_backoff"] = RecommendationRule{
+		Pattern: "Image pull failures",
+		Condition: func(context map[string]interface{}) bool {
+			events, ok := context["events"].([]string)
+			if !ok {
+				return false
+			}
+			for _, event := range events {
+				if event == "ImagePullBackOff" || event == "ErrImagePull" {
+					return true
+				}
+			}
+			return false
+		},
+		Recommendation: "Check image repository accessibility and image pull secrets configuration.",
+		Priority:       1,
+		Category:       "Configuration",
+	}
+
+	r.knowledgeBase["pending_pods"] = RecommendationRule{
+		Pattern: "Pods stuck in pending state",
+		Condition: func(context map[string]interface{}) bool {
+			pendingPods, ok := context["pending_pods"].(int)
+			return ok && pendingPods > 0
+		},
+		Recommendation: "Check node resources, affinity rules, and persistent volume claims.",
+		Priority:       2,
+		Category:       "Resource Management",
+	}
+
+	r.knowledgeBase["low_cpu_usage"] = RecommendationRule{
+		Pattern: "Low CPU utilization",
+		Condition: func(context map[string]interface{}) bool {
+			cpuUsage, ok := context["cpu_usage_percent"].(float64)
+			return ok && cpuUsage < 20.0
+		},
+		Recommendation: "Consider reducing CPU requests to optimize resource allocation and reduce costs.",
+		Priority:       3,
+		Category:       "Cost Optimization",
+	}
+
+	r.knowledgeBase["low_memory_usage"] = RecommendationRule{
+		Pattern: "Low memory utilization",
+		Condition: func(context map[string]interface{}) bool {
+			memoryUsage, ok := context["memory_usage_percent"].(float64)
+			return ok && memoryUsage < 30.0
+		},
+		Recommendation: "Consider reducing memory requests to optimize resource allocation.",
+		Priority:       3,
+		Category:       "Cost Optimization",
+	}
 }
