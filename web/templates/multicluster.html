@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>K8s Lens - Multi-Cluster Management</h1>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/cluster">Cluster</a>
+                <a href="/analysis">Analysis</a>
+                <a href="/multicluster">Multi-Cluster</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="cluster-contexts">
+                <h2>Available Clusters</h2>
+                <div id="cluster-contexts">
+                    Loading clusters...
+                </div>
+            </section>
+
+            <section class="cluster-comparison">
+                <h2>Cluster Comparison</h2>
+                <form id="comparison-form">
+                    <select id="resource-type">
+                        <option value="pods">Pods</option>
+                        <option value="nodes">Nodes</option>
+                        <option value="deployments">Deployments</option>
+                    </select>
+                    <button type="submit">Compare Clusters</button>
+                </form>
+                <div id="comparison-results"></div>
+            </section>
+
+            <section class="federated-analysis">
+                <h2>Federated Analysis</h2>
+                <button onclick="runFederatedAnalysis()">Run Federated Analysis</button>
+                <div id="federated-results"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/multicluster.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>K8s Lens - Resource Analysis</h1>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/cluster">Cluster</a>
+                <a href="/analysis">Analysis</a>
+                <a href="/multicluster">Multi-Cluster</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="resource-analysis">
+                <h2>Resource Analysis</h2>
+                <form onsubmit="analyzeResource(); return false;">
+                    <div class="form-group">
+                        <label for="analysis-resource-type">Resource Type:</label>
+                        <select id="analysis-resource-type">
+                            <option value="pod">Pod</option>
+                            <option value="deployment">Deployment</option>
+                            <option value="service">Service</option>
+                            <option value="statefulset">StatefulSet</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysis-resource-name">Resource Name:</label>
+                        <input type="text" id="analysis-resource-name" placeholder="my-app-pod" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysis-namespace">Namespace:</label>
+                        <input type="text" id="analysis-namespace" placeholder="default" value="default">
+                    </div>
+                    <button type="submit">Analyze Resource</button>
+                </form>
+                <div id="analysis-results"></div>
+            </section>
+
+            <section class="optimization-analysis">
+                <h2>Optimization Analysis</h2>
+                <form onsubmit="optimizeNamespace(); return false;">
+                    <div class="form-group">
+                        <label for="optimization-namespace">Namespace:</label>
+                        <input type="text" id="optimization-namespace" placeholder="default" value="default">
+                    </div>
+                    <button type="submit">Analyze Optimizations</button>
+                </form>
+                <div id="optimization-results"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

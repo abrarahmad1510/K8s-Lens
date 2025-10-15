@@ -1,0 +1,24 @@
+FROM golang:1.21-alpine AS builder
+
+WORKDIR /app
+COPY . .
+
+# Install dependencies
+RUN go mod download
+
+# Build the CLI
+RUN go build -o k8s-lens cmd/k8s-lens/main.go
+
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates kubectl
+
+WORKDIR /root/
+
+# Copy the binary
+COPY --from=builder /app/k8s-lens .
+
+# Add to PATH
+ENV PATH="/root:${PATH}"
+
+CMD ["k8s-lens", "--help"]

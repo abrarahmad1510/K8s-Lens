@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.title}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>K8s Lens - Cluster Overview</h1>
+            <nav>
+                <a href="/">Dashboard</a>
+                <a href="/cluster">Cluster</a>
+                <a href="/analysis">Analysis</a>
+                <a href="/multicluster">Multi-Cluster</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="cluster-metrics">
+                <h2>Cluster Metrics</h2>
+                <div class="metrics">
+                    <div class="metric-card">
+                        <h3>Cluster Version</h3>
+                        <div id="cluster-version">Loading...</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Nodes</h3>
+                        <div id="node-count">Loading...</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Pods</h3>
+                        <div id="pod-count">Loading...</div>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Status</h3>
+                        <div id="cluster-status">Loading...</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="cluster-health">
+                <h2>Cluster Health</h2>
+                <div id="health-details">
+                    <p>Detailed health information would be displayed here.</p>
+                </div>
+            </section>
+
+            <section class="cluster-actions">
+                <h2>Cluster Actions</h2>
+                <div class="action-buttons">
+                    <button onclick="runClusterScan()">Run Cluster Scan</button>
+                    <button onclick="checkSecurity()">Security Audit</button>
+                    <button onclick="generateReport()">Generate Report</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

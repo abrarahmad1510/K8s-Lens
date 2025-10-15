@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analyze"
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/multicluster"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/optimize"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/setup"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/test"
@@ -16,7 +17,7 @@ import (
 )
 
 var (
-	versionNum = "0.3.0" // Updated version for Phase 3
+	versionNum = "1.0.0"
 	blue       = color.New(color.FgBlue).SprintFunc()
 	green      = color.New(color.FgGreen).SprintFunc()
 	red        = color.New(color.FgRed).SprintFunc()
@@ -63,6 +64,7 @@ Examples:
 	rootCmd.AddCommand(test.TestCmd)
 	rootCmd.AddCommand(createCompletionCommand())
 	rootCmd.AddCommand(optimize.OptimizeCmd)
+	rootCmd.AddCommand(multicluster.MulticlusterCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		utils.PrintError("Command Execution Failed: %s", err)
