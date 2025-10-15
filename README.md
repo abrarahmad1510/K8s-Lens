@@ -1,4 +1,3 @@
-cat > README.md << 'EOF'
 # K8s Lens 🔍
 
 > AI-Powered Kubernetes Troubleshooting Assistant - Professional CLI Foundation
