@@ -27,7 +27,7 @@ K8s Lens is an intelligent command-line tool designed to help developers and ope
 - Go 1.21 or later
 - Git
 
-### Installation
+### Installation: 
 
 ```bash
 # Clone the repository
@@ -39,3 +39,60 @@ make build
 
 # Install to your PATH (optional)
 sudo cp bin/k8s-lens /usr/local/bin/
+```
+### Basic Usage: 
+
+```bash
+# Check version
+k8s-lens version
+
+# Analyze a pod
+k8s-lens analyze pod my-app-pod
+
+# Analyze with verbose output
+k8s-lens analyze deployment web-service --verbose
+
+# Analyze in specific namespace
+k8s-lens analyze service frontend -n production
+
+# Generate shell completions
+k8s-lens completion zsh > ~/.zsh/completion/_k8s-lens
+```
+### Example Output: 
+
+```bash
+$ k8s-lens analyze pod test-pod --verbose
+
+INFO: Verbose mode enabled
+INFO: Resource type: pod
+INFO: Resource name: test-pod
+INFO: Namespace: default
+ANALYZING: pod/test-pod in namespace 'default'
+STATUS: K8s Lens analysis engine initialized
+NEXT: Kubernetes cluster integration pending
+
+--- SIMULATION RESULTS ---
+PASS: Pod spec validation completed
+WARNING: Container resource limits not set
+FAIL: Liveness probe configuration issue detected
+RECOMMENDATION: Check application health endpoint configuration
+```
+### Project Architecture: 
+
+```bash
+k8s-lens/
+├── cmd/k8s-lens/
+│   └── main.go              # CLI entry point
+├── internal/utils/
+│   └── helpers.go           # Utility functions
+├── pkg/                     # Future packages
+├── Makefile                 # Build system
+├── go.mod                   # Dependencies
+└── README.md               # Documentation
+```
+
+
+
+
+
+
