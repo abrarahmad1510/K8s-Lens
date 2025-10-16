@@ -1,4 +1,4 @@
-# K8s Lens - Kubernetes Intelligence Powered by A.I 
+# Open Source Contribution - Kubernetes Orchestration Tool 
 
 <table>
 <tr>
@@ -6,8 +6,7 @@
   <img src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/kubernetes/kubernetes.png" alt="K8s Lens" width="180">
 </td>
 <td>
-  <h3>Enterprise-grade Kubernetes operations platform with AI-driven diagnostics and automated remediation</h3>
-  <br>
+  <h3>Enterprise Ready Kubernetes Operations Platform With AI-driven Diagnostics adn Automated Remediation</h3>
   
   **Core Capabilities:**
   - 🔍 AI-Powered Cluster Analysis & Root Cause Detection
