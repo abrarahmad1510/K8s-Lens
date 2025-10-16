@@ -20,35 +20,35 @@ Built with AI-powered analysis and enterprise-grade security features, it helps 
 
 The project combines machine learning insights with practical automation to reduce manual toil, prevent outages, and optimize resource utilization across multi-cluster environments.
 
-## Features
+### Features
 
-### 🔍 Intelligent Analysis
+## 🔍 Intelligent Analysis
 - **AI-Powered Diagnostics**: Machine learning-driven analysis of Kubernetes resources
 - **Comprehensive Health Reports**: Actionable insights with SRE best practices
 - **Deep Resource Inspection**: Pods, deployments, services, and statefulsets
 - **Multi-Cluster Support**: Unified view across multiple Kubernetes clusters
 
-### 🛡️ Enterprise Security
+## 🛡️ Enterprise Security
 - **RBAC Security Analysis**: Risk assessment and permission auditing
 - **Security Scanning**: Compliance scoring and vulnerability detection
 - **Policy Enforcement**: Automated security policy validation
 - **Audit Logging**: Comprehensive operation tracking
 
-### 🤖 Automation & Self-Healing
+## 🤖 Automation & Self-Healing
 - **Automated Remediation**: Auto-fix common Kubernetes issues
 - **Predictive Scaling**: ML-based resource optimization
 - **Self-Healing Mechanisms**: Automatic recovery from failures
 - **Intelligent Rollbacks**: Safe deployment management
 
-### 📊 Advanced Monitoring
+## 📊 Advanced Monitoring
 - **Prometheus Integration**: Real-time metrics collection and analysis
 - **Performance Analytics**: Resource utilization and bottleneck detection
 - **Custom Dashboards**: Tailored monitoring views
 - **Alert Integration**: Smart alerting and notification system
 
-## Quick Start
+### Quick Start
 
-### Prerequisites
+## Prerequisites
 - Kubernetes cluster (v1.20+)
 - kubectl configured with cluster access
 - Go 1.19+ (for development)
