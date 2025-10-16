@@ -1,4 +1,4 @@
-# K8s Lens - AI-Powered Kubernetes Troubleshooting & Automation
+# Open Source Contribution - Container Orchestration (K8s Lens)
 
 ## Table of Contents
 1. [About](#about)
