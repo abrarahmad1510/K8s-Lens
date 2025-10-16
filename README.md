@@ -1,4 +1,4 @@
-# Open Source Contribution - Container Orchestration (K8s Lens)
+# Open Source Contribution - Containerisation (K8s Lens)
 
 ## Table of Contents
 1. [About](#about)
