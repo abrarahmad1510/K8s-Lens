@@ -1,17 +1,17 @@
 # Open Source Contribution - Containerisation (K8s Lens)
 
 ## Table of Contents
-1. [About](#about)
-2. [Features](#features)
-3. [Quick Start](#quick-start)
-4. [Installation](#installation)
-5. [Usage](#usage)
-6. [Enterprise Features](#enterprise-features)
-7. [Automation & Self-Healing](#automation--self-healing)
-8. [Contributing](#contributing)
-9. [Technical Stack](#technical-stack)
-10. [Development](#development)
-11. [License](#license)
+I. [About](#about)
+II. [Features](#features)
+III. [Quick Start](#quick-start)
+IV. [Installation](#installation)
+V. [Usage](#usage)
+VI. [Enterprise Features](#enterprise-features)
+VII. [Automation & Self-Healing](#automation--self-healing)
+VIII. [Contributing](#contributing)
+IX. [Technical Stack](#technical-stack)
+X. [Development](#development)
+XI. [License](#license)
 
 ## About
 
