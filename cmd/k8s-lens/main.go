@@ -1,44 +1,45 @@
 package main
 
 import (
-	"fmt"
-	"os"
+        "fmt"
+        "os"
 
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analytics"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analyze"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/enterprise"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/integrations"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/multicluster"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/optimize"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/setup"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/test"
-	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/version"
-	"github.com/abrarahmad1510/k8s-lens/internal/utils"
-	"github.com/common-nighthawk/go-figure"
-	"github.com/fatih/color"
-	"github.com/spf13/cobra"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analytics"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/automation"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analyze"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/enterprise"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/integrations"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/multicluster"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/optimize"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/setup"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/test"
+        "github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/version"
+        "github.com/abrarahmad1510/k8s-lens/internal/utils"
+        "github.com/common-nighthawk/go-figure"
+        "github.com/fatih/color"
+        "github.com/spf13/cobra"
 )
 
 var (
-	versionNum = "1.0.0"
-	blue       = color.New(color.FgBlue).SprintFunc()
-	green      = color.New(color.FgGreen).SprintFunc()
-	red        = color.New(color.FgRed).SprintFunc()
-	yellow     = color.New(color.FgYellow).SprintFunc()
+        versionNum = "1.0.0"
+        blue       = color.New(color.FgBlue).SprintFunc()
+        green      = color.New(color.FgGreen).SprintFunc()
+        red        = color.New(color.FgRed).SprintFunc()
+        yellow     = color.New(color.FgYellow).SprintFunc()
 )
 
 func main() {
-	// Print ASCII Art Banner For Non-Completion Commands
-	if len(os.Args) > 1 && os.Args[1] != "completion" {
-		fig := figure.NewFigure("K8s Lens", "slant", true)
-		fig.Print()
-		fmt.Println()
-	}
+        // Print ASCII Art Banner For Non-Completion Commands
+        if len(os.Args) > 1 && os.Args[1] != "completion" {
+                fig := figure.NewFigure("K8s Lens", "slant", true)
+                fig.Print()
+                fmt.Println()
+        }
 
-	var rootCmd = &cobra.Command{
-		Use:   "k8s-lens",
-		Short: blue("AI Powered Kubernetes Troubleshooting Assistant"),
-		Long: yellow(`
+        var rootCmd = &cobra.Command{
+                Use:   "k8s-lens",
+                Short: blue("AI Powered Kubernetes Troubleshooting Assistant"),
+                Long: yellow(`
 K8s Lens Provides Intelligent Diagnostics And Recommendations For Kubernetes Issues
 
 Features:
@@ -47,42 +48,48 @@ Features:
 • Deep Dive Into Pod, Deployment, And Service Issues
 • Intelligent Recommendations Based On SRE Best Practices
 • Multi Cluster Support And Real Time Monitoring
+• Enterprise Security And RBAC Analysis
+• Automated Remediation And Self-Healing
 
 Examples:
   k8s-lens analyze pod my-app-pod
   k8s-lens analyze deployment my-web-service
   k8s-lens analyze statefulset database
+  k8s-lens enterprise rbac analyze default
+  k8s-lens enterprise security scan production
+  k8s-lens automation remediate pod my-pod CrashLoopBackOff
   k8s-lens setup
   k8s-lens version
 `),
-		Version:       versionNum,
-		SilenceUsage:  true,
-		SilenceErrors: true,
-	}
+                Version:       versionNum,
+                SilenceUsage:  true,
+                SilenceErrors: true,
+        }
 
-	// Add commands from the new command structure
-	rootCmd.AddCommand(analyze.AnalyzeCmd)
-	rootCmd.AddCommand(setup.SetupCmd)
-	rootCmd.AddCommand(version.VersionCmd)
-	rootCmd.AddCommand(test.TestCmd)
-	rootCmd.AddCommand(createCompletionCommand())
-	rootCmd.AddCommand(optimize.OptimizeCmd)
-	rootCmd.AddCommand(multicluster.MulticlusterCmd)
-	rootCmd.AddCommand(analytics.AnalyticsCmd)
-	rootCmd.AddCommand(integrations.IntegrationsCmd)
-	rootCmd.AddCommand(enterprise.EnterpriseCmd)
+        // Add commands from the new command structure
+        rootCmd.AddCommand(analyze.AnalyzeCmd)
+        rootCmd.AddCommand(setup.SetupCmd)
+        rootCmd.AddCommand(version.VersionCmd)
+        rootCmd.AddCommand(test.TestCmd)
+        rootCmd.AddCommand(createCompletionCommand())
+        rootCmd.AddCommand(optimize.OptimizeCmd)
+        rootCmd.AddCommand(multicluster.MulticlusterCmd)
+        rootCmd.AddCommand(analytics.AnalyticsCmd)
+        rootCmd.AddCommand(integrations.IntegrationsCmd)
+        rootCmd.AddCommand(enterprise.EnterpriseCmd)
+        rootCmd.AddCommand(automation.AutomationCmd)
 
-	if err := rootCmd.Execute(); err != nil {
-		utils.PrintError("Command Execution Failed: %s", err)
-		os.Exit(1)
-	}
+        if err := rootCmd.Execute(); err != nil {
+                utils.PrintError("Command Execution Failed: %s", err)
+                os.Exit(1)
+        }
 }
 
 func createCompletionCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "completion [bash|zsh|fish|powershell]",
-		Short: blue("Generate Completion Script"),
-		Long: yellow(`
+        return &cobra.Command{
+                Use:   "completion [bash|zsh|fish|powershell]",
+                Short: blue("Generate Completion Script"),
+                Long: yellow(`
 Generate Completion Script For K8s Lens
 
 To Load Completions:
@@ -118,20 +125,20 @@ PowerShell:
   PS> k8s-lens completion powershell > k8s-lens.ps1
   # And Source This File From Your PowerShell Profile.
 `),
-		DisableFlagsInUseLine: true,
-		ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
-		Args:                  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			switch args[0] {
-			case "bash":
-				cmd.Root().GenBashCompletion(os.Stdout)
-			case "zsh":
-				cmd.Root().GenZshCompletion(os.Stdout)
-			case "fish":
-				cmd.Root().GenFishCompletion(os.Stdout, true)
-			case "powershell":
-				cmd.Root().GenPowerShellCompletion(os.Stdout)
-			}
-		},
-	}
+                DisableFlagsInUseLine: true,
+                ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
+                Args:                  cobra.ExactArgs(1),
+                Run: func(cmd *cobra.Command, args []string) {
+                        switch args[0] {
+                        case "bash":
+                                cmd.Root().GenBashCompletion(os.Stdout)
+                        case "zsh":
+                                cmd.Root().GenZshCompletion(os.Stdout)
+                        case "fish":
+                                cmd.Root().GenFishCompletion(os.Stdout, true)
+                        case "powershell":
+                                cmd.Root().GenPowerShellCompletion(os.Stdout)
+                        }
+                },
+        }
 }
