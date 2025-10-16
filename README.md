@@ -61,3 +61,5 @@ go install github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens@latest
 git clone https://github.com/abrarahmad1510/k8s-lens
 cd k8s-lens
 make build
+```
+### Verify Installation 
