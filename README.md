@@ -1,18 +1,18 @@
 # Open Source Contribution - Containerisation (K8s Lens)
 
 ## Table of Contents
-I. [About](#about)
-II. [Features](#features)
-III. [Quick Start](#quick-start)
-IV. [Installation](#installation)
-V. [Usage](#usage)
-VI. [Enterprise Features](#enterprise-features)
-VII. [Automation & Self-Healing](#automation--self-healing)
-VIII. [Contributing](#contributing)
-IX. [Technical Stack](#technical-stack)
-X. [Development](#development)
-XI. [License](#license)
-
+- [About](#about)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Enterprise Features](#enterprise-features)
+- [Automation & Self-Healing](#automation--self-healing)
+- [Contributing](#contributing)
+- [Technical Stack](#technical-stack)
+- [Development](#development)
+- [License](#license)
+    
 ## About
 
 K8s Lens is an advanced Kubernetes CLI tool that provides intelligent diagnostics, automated remediation, and comprehensive monitoring capabilities. Built with AI-powered analysis and enterprise-grade security features, it helps DevOps teams and SREs efficiently manage and troubleshoot Kubernetes clusters at scale.
