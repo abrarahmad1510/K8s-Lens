@@ -53,22 +53,22 @@ Built on extensible architecture principles, K8s Lens integrates seamlessly with
 
 ## Key Capabilities
 
-### Intelligent Analysis & Diagnostics
+### 🌟 Intelligent Analysis & Diagnostics
 Advanced AI models continuously analyze cluster state, resource utilization patterns, and application health metrics to provide deep insights into system behavior. Our diagnostic engine identifies root causes across complex dependency chains, significantly reducing troubleshooting time.
 
-### Enterprise Security & Compliance
+### 🌟 Enterprise Security & Compliance
 Comprehensive security posture management including RBAC analysis, vulnerability scanning, policy enforcement, and continuous compliance monitoring against industry standards (HIPAA, SOC2, PCI-DSS). Automated audit trails ensure full traceability for regulated environments.
 
-### Autonomous Remediation
+### 🌟 Autonomous Remediation
 Self-healing capabilities that detect and resolve common failure scenarios without human intervention. Extensible plugin architecture allows organizations to codify institutional knowledge into automated remediation workflows.
 
-### Multi-Cluster Operations
+### 🌟 Multi-Cluster Operations
 Unified control plane for managing heterogeneous Kubernetes environments across cloud providers, on-premises data centers, and edge locations. Centralized visibility with distributed execution ensures scalability.
 
-### Performance Optimization
+### 🌟 Performance Optimization
 Predictive analytics drive intelligent scaling decisions and resource optimization recommendations. Machine learning models identify inefficiencies and suggest cost-saving opportunities without sacrificing performance.
 
-### Advanced Integrations
+### 🌟 Advanced Integrations
 Native integration with Prometheus for metrics collection, support for custom dashboards, and webhook-based alert routing to existing incident management platforms. RESTful API enables custom workflows and automation.
 
 ---
