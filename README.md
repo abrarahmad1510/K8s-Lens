@@ -20,40 +20,40 @@ Built with AI-powered analysis and enterprise-grade security features, it helps 
 
 The project combines machine learning insights with practical automation to reduce manual toil, prevent outages, and optimize resource utilization across multi-cluster environments.
 
-### Features
+## Features
 
-## 🔍 Intelligent Analysis
+### 🔍 Intelligent Analysis
 - **AI-Powered Diagnostics**: Machine learning-driven analysis of Kubernetes resources
 - **Comprehensive Health Reports**: Actionable insights with SRE best practices
 - **Deep Resource Inspection**: Pods, deployments, services, and statefulsets
 - **Multi-Cluster Support**: Unified view across multiple Kubernetes clusters
 
-## 🛡️ Enterprise Security
+### 🛡️ Enterprise Security
 - **RBAC Security Analysis**: Risk assessment and permission auditing
 - **Security Scanning**: Compliance scoring and vulnerability detection
 - **Policy Enforcement**: Automated security policy validation
 - **Audit Logging**: Comprehensive operation tracking
 
-## 🤖 Automation & Self-Healing
+### 🤖 Automation & Self-Healing
 - **Automated Remediation**: Auto-fix common Kubernetes issues
 - **Predictive Scaling**: ML-based resource optimization
 - **Self-Healing Mechanisms**: Automatic recovery from failures
 - **Intelligent Rollbacks**: Safe deployment management
 
-## 📊 Advanced Monitoring
+### 📊 Advanced Monitoring
 - **Prometheus Integration**: Real-time metrics collection and analysis
 - **Performance Analytics**: Resource utilization and bottleneck detection
 - **Custom Dashboards**: Tailored monitoring views
 - **Alert Integration**: Smart alerting and notification system
 
-### Quick Start
+## Quick Start
 
-## Prerequisites
+### Prerequisites
 - Kubernetes cluster (v1.20+)
 - kubectl configured with cluster access
 - Go 1.19+ (for development)
 
-### Basic Installation
+## Basic Installation
 ```bash
 # Download and install
 go install github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens@latest
@@ -63,12 +63,12 @@ git clone https://github.com/abrarahmad1510/k8s-lens
 cd k8s-lens
 make build
 ```
-## Verify Installation 
+### Verify Installation 
 ```bash
 k8s-lens version
 k8s-lens --help
 ```
-## Binary Download 
+### Binary Download 
 ```bash
 # Linux
 curl -L https://github.com/abrarahmad1510/k8s-lens/releases/latest/download/k8s-lens-linux-amd64 -o k8s-lens
@@ -80,18 +80,18 @@ curl -L https://github.com/abrarahmad1510/k8s-lens/releases/latest/download/k8s-
 chmod +x k8s-lens
 sudo mv k8s-lens /usr/local/bin/
 ```
-## Docker
+### Docker
 ```bash
 docker run -v ~/.kube:/root/.kube abrarahmad1510/k8s-lens:latest analyze cluster
 ```
 
-## Helm Chart
+### Helm Chart
 ```bash
 helm repo add k8s-lens https://abrarahmad1510.github.io/k8s-lens
 helm install k8s-lens k8s-lens/k8s-lens
 ```
-### Usage
-## Basic Analysis
+## Usage
+### Basic Analysis
 ```bash
 # Analyze a specific pod
 k8s-lens analyze pod my-app-pod -n production
@@ -103,7 +103,7 @@ k8s-lens analyze deployment my-web-service
 k8s-lens analyze cluster
 ```
 
-## Enterprise Security 
+### Enterprise Security 
 ```bash
 # RBAC risk analysis
 k8s-lens enterprise rbac analyze default
@@ -111,7 +111,7 @@ k8s-lens enterprise rbac analyze default
 # Security scanning
 k8s-lens enterprise security scan production
 ```
-## Automation & Self-Healing
+### Automation & Self-Healing
 ```bash
 # Automatically remediate pod issues
 k8s-lens automation remediate pod my-pod CrashLoopBackOff -n default
@@ -123,7 +123,7 @@ k8s-lens automation remediate list-actions
 k8s-lens automation scale predictive my-deployment
 ```
 
-## Advanced Analysis
+### Advanced Analysis
 ```bash
 # Prometheus metrics integration
 k8s-lens integrations metrics cluster --prometheus-url http://localhost:9090
@@ -131,22 +131,22 @@ k8s-lens integrations metrics cluster --prometheus-url http://localhost:9090
 # Multi-cluster operations
 k8s-lens multicluster status
 ```
-### Enterprise Features 
-## 🔐 RBAC Security Analysis
+## Enterprise Features 
+### 🔐 RBAC Security Analysis
 - **Risk Assessment**: Identify dangerous permissions and service accounts
 - **Compliance Scoring**: Measure against security benchmarks
 - **Recommendation Engine**: Automated security improvements
 - **Audit Reports**:  Comprehensive permission documentation
 
-## 🚨 Security Scanning
+### 🚨 Security Scanning
 - **Vulnerability Detection**: CVEs and security misconfigurations
 - **Network Policy Validation**: Ensure proper isolation
 - **Secrets Management**: Audit secret usage and exposure
 - **Compliance Checks**:  HIPAA, SOC2, PCI-DSS standards
 
-### Automation & Self-Heealing 
+## Automation & Self-Heealing 
 
-## Core Automation Engine
+### Core Automation Engine
 ```bash
 // Extensible plugin architecture
 type Remediator interface {
@@ -155,23 +155,23 @@ type Remediator interface {
 }
 ```
 
-## Supported Remediations
+### Supported Remediations
 - **Pod Restarts**: CrashLoopBackOff, ImagePullBackOff, ErrImagePull
 - **Resource Optimization**: Auto-scaling, resource limit adjustments
 - **Network Healing**: Service endpoint regeneration
 - **Storage Recovery**:  Persistent volume claim management
 
-## Predictive Scaling
+### Predictive Scaling
 - Machine learning-based workload forecasting
 - Horizontal and vertical pod autoscaling
 - Cost-optimized resource allocation
 - Real-time metric analysis
 
-### Contributing 
+## Contributing 
 We welcome contributions from the open source community! K8s Lens is built for container orchestration in 
 Kubernetes cloud environments and thrives on community input.
 
-### Getting Started With Developement 
+## Getting Started With Developement 
 ```bash
 # Fork and clone the repository
 git clone https://github.com/abrarahmad1510/k8s-lens
@@ -184,20 +184,20 @@ make test-all
 # Run comprehensive tests
 make test-phase4-complete
 ```
-### Areas for Contributions: 
+## Areas for Contributions: 
 - **New Remediations**: Add automated fixes for common issues
 - **Analysis Plugins**: Extend diagnostic capabilities
 - **Integration Adapters**: Support for additional monitoring tools
 - **Performance Optimization**:  Enhance scaling and resource usage
 
-### Developement Workflow 
+## Developement Workflow 
 1. Fork the repository
 2. Create a feature branch (git checkout -b feature/amazing-feature)
 3. Commit your changes (git commit -m 'Add amazing feature')
 4. Push to the branch (git push origin feature/amazing-feature)
 5. Open a Pull Request
 
-### Testing Standards
+## Testing Standards
 ```bash
 # Run the complete test suite
 make test-all
@@ -208,29 +208,29 @@ make test-integration
 make test-e2e
 make test-security
 ```
-### Technical Stack
-## ⚙️ Backend & Core
+## Technical Stack
+### ⚙️ Backend & Core
 - **Go**: High-performance CLI development
 - **Cobra**: Modern CLI framework
 - **Kubernetes Client-go**: Official Kubernetes client library
 - **Prometheus**: Metrics collection and analysis
 
-## 🤖 Machine Learning 
+### 🤖 Machine Learning 
 - **TensorFlow**: Predictive analytics and anomaly detection
 - **Custom ML Models**: Workload forecasting and pattern recognition
 
-## ✅ Monitoring & Integration
+### ✅ Monitoring & Integration
 - **Prometheus Integration**: Real-time metrics
 - **Grafana Dashboards**: Visualization and alerting
 - **Multiple Cloud Providers**: AWS, GCP, Azure, and on-prem
 
-## 🏅 Testing & Quality
+### 🏅 Testing & Quality
 - **Testify**: Assertion and mocking framework
 - **Ginkgo**: BDD testing framework
 - **Industrial Test Suite**: Comprehensive validation
 
-### Developement 
-## Project Structure 
+## Developement 
+### Project Structure 
 ```text
 k8s-lens/
 ├── cmd/k8s-lens/          # CLI command definitions
@@ -242,7 +242,7 @@ k8s-lens/
 ├── scripts/              # Build and test scripts
 └── tests/               # Comprehensive test suites
 ```
-## Build System
+### Build System
 ```bash
 # Build the binary
 make build
@@ -256,7 +256,7 @@ make release
 # Development build with hot-reload
 make dev
 ```
-## Testing Infrastructure
+### Testing Infrastructure
 ```bash
 # Comprehensive test suite
 ./scripts/test-suite.sh
@@ -270,10 +270,10 @@ make test-security
 # Regression testing
 make test-regression
 ```
-### License 
+## License 
 This project is licensed under the MIT Open Use License - see the LICENSE file for details.
 
-### Acknowledgments
+## Acknowledgments
 - Kubernetes Community for the amazing ecosystem
 - Prometheus for robust metrics collection
 - The Go community for excellent tooling
