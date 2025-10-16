@@ -53,6 +53,29 @@ test-node-metrics:
 test-pod-metrics:
 	@./bin/k8s-lens integrations metrics pod $(shell kubectl get pods -o jsonpath='{.items[0].metadata.name}') -n default --prometheus-url http://localhost:9090
 
+# Week 5-6: Enterprise Features
+test-week5-6:
+	@echo "Testing Week 5-6: Enterprise Features"
+	@chmod +x scripts/test-week5-6.sh
+	@./scripts/test-week5-6.sh
+
+# Individual enterprise tests
+test-rbac:
+	@echo "Testing RBAC analysis..."
+	@./bin/k8s-lens enterprise rbac default
+
+test-security:
+	@echo "Testing security scanning..."
+	@./bin/k8s-lens enterprise security default
+
+# Create test namespace
+create-test-ns:
+	@kubectl create namespace k8s-lens-test --dry-run=client -o yaml | kubectl apply -f -
+
+# Clean test namespace
+clean-test-ns:
+	@kubectl delete namespace k8s-lens-test --ignore-not-found=true
+	
 help:
 	@echo "K8s Lens Build System"
 	@echo ""

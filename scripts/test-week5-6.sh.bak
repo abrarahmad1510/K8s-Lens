@@ -1,0 +1,144 @@
+#!/bin/bash
+
+set -e
+
+echo "🏢 WEEK 5-6: Testing Enterprise Features Complete Suite"
+echo "======================================================"
+
+# Build the project
+echo ""
+echo "🔨 Building K8s Lens..."
+make build
+echo "✅ Build completed"
+
+# Create test namespace and resources
+echo ""
+echo "🚀 Setting up test environment..."
+kubectl create namespace k8s-lens-test --dry-run=client -o yaml | kubectl apply -f -
+
+# Deploy test workloads with various security configurations
+echo ""
+echo "📦 Deploying test workloads..."
+
+# Secure deployment
+cat <<EOF | kubectl apply -n k8s-lens-test -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secure-app
+  template:
+    metadata:
+      labels:
+        app: secure-app
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          readOnlyRootFilesystem: true
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: secure-service
+spec:
+  selector:
+    app: secure-app
+  ports:
+  - port: 80
+    targetPort: 80
+EOF
+
+# Insecure deployment (for testing security scanner)
+cat <<EOF | kubectl apply -n k8s-lens-test -f -
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: insecure-app
+  template:
+    metadata:
+      labels:
+        app: insecure-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+EOF
+
+# Wait for pods to be ready
+echo ""
+echo "⏳ Waiting for test pods to be ready..."
+kubectl wait --for=condition=ready pod -l app=secure-app -n k8s-lens-test --timeout=60s
+kubectl wait --for=condition=ready pod -l app=insecure-app -n k8s-lens-test --timeout=60s
+
+# Test 1: RBAC Analysis
+echo ""
+echo "🔐 TEST 1: RBAC Analysis"
+echo "========================"
+./bin/k8s-lens enterprise rbac k8s-lens-test
+
+# Test 2: Security Scan
+echo ""
+echo "🛡️  TEST 2: Security Scan"
+echo "========================"
+./bin/k8s-lens enterprise security k8s-lens-test
+
+# Test 3: Default Namespace RBAC
+echo ""
+echo "🏠 TEST 3: Default Namespace RBAC"
+echo "================================"
+./bin/k8s-lens enterprise rbac default
+
+# Test 4: Default Namespace Security
+echo ""
+echo "🏠 TEST 4: Default Namespace Security"
+echo "===================================="
+./bin/k8s-lens enterprise security default
+
+# Cleanup
+echo ""
+echo "🧹 Cleaning up test environment..."
+kubectl delete namespace k8s-lens-test
+
+echo ""
+echo "🎉 WEEK 5-6 TESTING COMPLETE!"
+echo "============================="
+echo "✅ RBAC analysis working"
+echo "✅ Security scanning operational"
+echo "✅ Enterprise features ready"
+echo ""
+echo "🔧 Available Commands:"
+echo "   ./bin/k8s-lens enterprise rbac <namespace>"
+echo "   ./bin/k8s-lens enterprise security <namespace>"

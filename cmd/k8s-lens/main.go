@@ -6,6 +6,7 @@ import (
 
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analytics"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/analyze"
+	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/enterprise"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/integrations"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/multicluster"
 	"github.com/abrarahmad1510/k8s-lens/cmd/k8s-lens/optimize"
@@ -69,6 +70,7 @@ Examples:
 	rootCmd.AddCommand(multicluster.MulticlusterCmd)
 	rootCmd.AddCommand(analytics.AnalyticsCmd)
 	rootCmd.AddCommand(integrations.IntegrationsCmd)
+	rootCmd.AddCommand(enterprise.EnterpriseCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		utils.PrintError("Command Execution Failed: %s", err)
